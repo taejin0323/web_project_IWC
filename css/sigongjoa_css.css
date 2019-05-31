@@ -18,7 +18,7 @@
 
 
 body {
-	overflow:hidden;
+	overflow:scroll;
 	background-image:url('../images/background.jpg');
 	background-size:cover;
 	width:100%;
@@ -166,30 +166,11 @@ body {
 				top:420px;
 				left:405px;
 			}
-			#intro_start_2 {
-				right:190px;
-				bottom:120px;
+			#result_record {
+				top:580px;
+				left:405px;
 			}
-			#intro_start_3 {
-				right:190px;
-				bottom:70px;
-			}
-			#intro_start_4 {
-				right:20px;
-				bottom:170px;
-			}
-			#intro_start_5 {
-				right:20px;
-				bottom:120px;
-			}
-			#intro_start_6 {
-				right:20px;
-				bottom:70px;
-			}
-			#intro_start_7 {
-				right:105px;
-				bottom:15px;
-			}
+
 		.intro_start:hover {
 			box-shadow:0 0 3pt 2pt white;
 			cursor:pointer;
@@ -230,9 +211,9 @@ body {
 	#ready_image_go {
 		overflow-y:scroll;
 
-		margin-left:45px;
-		width:825px;
-		height:225px;
+		margin-left:35px;
+		width:835px;
+		height:500px;
 
 		border:2px skyblue solid;
 	}
@@ -251,9 +232,11 @@ body {
 		position:relative;
 		overflow:hidden;
 
-		margin-left:45px;
-		width:150px;
-		height:180px;
+		overflow-y:scroll;
+
+		margin-left:35px;
+		width:835px;
+		height:500px;
 
 		border:1px skyblue solid;
 

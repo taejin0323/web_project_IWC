@@ -3,6 +3,7 @@
 
 //=================================================================================================================
 //※ 변수
+var user_name;
 //=================================================================================================================
 //수치
 var round = 0;//현재 라운드
@@ -11,6 +12,7 @@ var people = 0;//현재 참여 인원
 var arr_go = [];//대기 - 출전 인원
 var arr_no = [];//대기 - 판정승
 var arr_win = [];//배틀 - 승리 인원
+var rand_arr = [];
 
 //이미지
 var images = "./images/heroes/";
@@ -152,8 +154,6 @@ var imageList = [];//이미지 선로딩용
 				return array;
 			}
 
-
-
 //=================================================================================================================
 //※ 구동 함수
 //=================================================================================================================
@@ -173,18 +173,17 @@ function ready(type) {
 		//3-1.첫 라운드 : 등록
 		for (var i=0;i<chaList.length;i++){
 			if (chaList[i][0] != "") {
-				switch (type) {
-					case "all":
-						arr_go.push(chaList[i]);
-
-						break;
-					default:
-						if (chaList[i][2].indexOf(type) != -1) {
-							arr_go.push(chaList[i]);
+					for(var x=0; x<8; x++){
+						rand_arr[x] = Math.floor(Math.random() * chaList.length);
+						for(var y=0; y<x; y++){
+							if(rand_arr[x]==rand_arr[y]){
+								x--;
+								break;
+							}
 						}
-
-						break;
-				}
+						arr_go.push(chaList[rand_arr[x]]);
+					}
+					break;
 			}
 		}
 	} else {
@@ -201,17 +200,21 @@ function ready(type) {
 	//4. 인원 셔플
 	arr_go = shuffle(arr_go)
 
-	//5. 부전승 체크
-		//5-1. 부전승 칸 비우기
+	//5. 밴 체크
+		//5-1. 밴 칸 비우기
 		arr_no = []
-		//5-2. 부전승 등록
-		if (arr_go.length % 2 != 0) {
-			arr_no.push(arr_go[arr_go.length - 1]);
-			arr_go.pop();
+		//5-2. 밴 등록
+		for(var p=0; p<chaList.length; p++){
+			for(var q=0; q<8; q++){
+				if(p==rand_arr[q]){
+					continue;
+				}
+			}
+				arr_no.push(chaList[p]);
 		}
 
 	//6. 현재 참여 인원 기억
-	people = arr_go.length + arr_no.length;
+	people = arr_go.length;
 
 	//7. 각종 수치 표시
 	$("#ready_round").innerHTML = round.toString();
@@ -234,21 +237,16 @@ function ready(type) {
 		//c. 스크롤 올리기
 		$("#ready_image_go").scrollTop = "0px";
 
-	//9. (있으면) 부전승 인원 표시
-	if (arr_no.length > 0) {
-		//a. 기존 부전승 지우기
-		$("#ready_image_no").innerHTML = "";
-		//b. 이미지 불러오기
+	//9. (있으면) 밴 인원 표시
+	for (var i=0;i<arr_no.length;i++) {
+		//c. 이미지 불러오기
 		var img = document.createElement("img");
-		img.src = images + arr_no[0][1] + ".png";
+		img.src = images + arr_no[i][1] + ".png";
 		//c. 이미지 사이즈 조절
 		img.style.width = ((img.naturalWidth/img.naturalHeight) * 180).toString() + "px";
 		img.style.height = "180px";
 		//d. 이미지 배치
-		$("#ready_image_no").innerHTML = "";
 		$("#ready_image_no").appendChild(img);
-	} else {
-		$("#ready_image_no").innerHTML = "없음";
 	}
 
 	//10. 시작 버튼
@@ -450,7 +448,7 @@ function battle_finish(counter) {
 			battle_ready(0);
 		//캐릭터가 없음
 		} else {
-			//a. 부전승자 (있으면) 등록
+			//a. 밴자 (있으면) 등록
 			if (arr_no.length > 0) {
 				arr_win.push(arr_no[0]);
 				arr_no = [];
@@ -508,14 +506,15 @@ function victory() {
 	}
 }
 
+//결과 화면
+function result(name) {
 
+}
 
 //=================================================================================================================
 //※ 실행
 //=================================================================================================================
 window.onload = function() {
-	//사용자 이름
-	var name;
 
 	$("#loading_start").value = "로 그 인";
 	$("#loading_start").disabled = "";
@@ -531,13 +530,14 @@ window.onload = function() {
 
 	//이미지 선로딩 - 실시
 	$("#loading_start").onclick = function() {
-		//이름 입력
-		name = prompt("아이디를 입력하세요", "username");
+		//사용자 이름 = user_name
+		user_name = prompt("아이디를 입력하세요", "username");
 
 		//버튼 비활성화
 		$("#loading_start").value = "로딩 중";
 		$("#loading_start").disabled = "disabled";
 
+		document.getElementById("welcome").innerHTML = user_name + "님 환영합니다!";
 		//로딩 실시
 		loadImages(imageList,function() {
 
@@ -549,10 +549,11 @@ window.onload = function() {
 			$("#intro_start_1").onclick = function() {
 				ready("영웅");
 			}
+			$("#result_record").onclick = function() {
+				result(user_name);
+			}
 
 		});
 	}
 }
-
-
 }());
