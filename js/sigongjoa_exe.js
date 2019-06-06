@@ -8,6 +8,8 @@ var user_name;
 //수치
 var round = 0;//현재 라운드
 var people = 0;//현재 참여 인원
+var n_round = 0;//N 번째 선택
+
 
 var arr_go = [];//대기 - 출전 인원
 var arr_no = [];//대기 - 판정승
@@ -30,7 +32,9 @@ var imageList = [];//이미지 선로딩용
 				img = new Image();
 				img.onload = function() {
 					//외부 처리
-					$("#loading_bar").style.width = Math.round((((arr.length - remaining + 1)/arr.length)*100),0).toString()+"%";
+					//$("#loading_bar").style.width = Math.round((((arr.length - remaining + 1)/arr.length)*100),0).toString()+"%";
+					$("#loading_start").style.display = "none";
+					$(".loading-container").style.display = "block";
 					//내부 처리
 					--remaining;
 					if (remaining <= 0) {
@@ -39,7 +43,8 @@ var imageList = [];//이미지 선로딩용
 				};
 				img.onerror = function() {
 					//외부 처리
-					$("#loading_bar").style.width = Math.round((((arr.length - remaining + 1)/arr.length)*100),0).toString()+"%";
+					$("#loading_start").style.display = "none";
+					$(".loading-container").style.display = "block";
 					--remaining;
 					if (remaining <= 0) {
 						callBack();
@@ -118,23 +123,6 @@ var imageList = [];//이미지 선로딩용
 			  return true;
 			};
 
-			//가중치 적용 랜덤
-			function rand(target) {//target : 숫자가 들어있는 배열
-				var number = 0;
-				for (i=0;i<target.length;i++) {
-					number += target[i];
-				}
-				var tmp = Math.random() * number;
-
-				number = 0;
-				for (i=0;i<target.length;i++) {
-					number += target[i];
-					if (tmp < number) {
-						return i;
-					}
-				}
-			};
-
 			//셔플
 			function shuffle(array) {
 				var currentIndex = array.length, temporaryValue, randomIndex ;
@@ -171,20 +159,17 @@ function ready(type) {
 	//3. IF 첫 라운드 ? 인원 불러오기
 	if (round == 1) {
 		//3-1.첫 라운드 : 등록
-		for (var i=0;i<chaList.length;i++){
-			if (chaList[i][0] != "") {
-					for(var x=0; x<8; x++){
-						rand_arr[x] = Math.floor(Math.random() * chaList.length);
-						for(var y=0; y<x; y++){
-							if(rand_arr[x]==rand_arr[y]){
-								x--;
-								break;
-							}
-						}
-						arr_go.push(chaList[rand_arr[x]]);
-					}
+		for(var x=0; x<8; x++){
+			rand_arr[x] = Math.floor(Math.random() * chaList.length);
+			for(var y=0; y<x; y++){
+				if(rand_arr[x]==rand_arr[y]){
+					x--;
 					break;
+				}
 			}
+		}
+		for(var x=0; x<8; x++){
+			arr_go.push(chaList[rand_arr[x]]);
 		}
 	} else {
 		//3-2-1. 이전 출전자 비우기
@@ -195,6 +180,9 @@ function ready(type) {
 		}
 		//3-2-3. 이전 우승자 비우기
 		arr_win = [];
+		//3-2-4. 출전 영웅만 표시
+		$("#ready_image_no").style.display = "none";
+		$("#ready_ban").style.display = "none";
 	}
 
 	//4. 인원 셔플
@@ -205,12 +193,15 @@ function ready(type) {
 		arr_no = []
 		//5-2. 밴 등록
 		for(var p=0; p<chaList.length; p++){
+			var flag = 0;
 			for(var q=0; q<8; q++){
 				if(p==rand_arr[q]){
-					continue;
+					flag=1;
 				}
 			}
+			if(flag==0){
 				arr_no.push(chaList[p]);
+			}
 		}
 
 	//6. 현재 참여 인원 기억
@@ -407,7 +398,7 @@ function battle_effect(win) {
 		$("#battle_winner_" + side[win]).style.display = "none";
 		//2. 이미지 이동 개시
 		battle_finish(0);
-	},950);
+	},150);
 }
 
 //전투 마무리
@@ -448,11 +439,6 @@ function battle_finish(counter) {
 			battle_ready(0);
 		//캐릭터가 없음
 		} else {
-			//a. 밴자 (있으면) 등록
-			if (arr_no.length > 0) {
-				arr_win.push(arr_no[0]);
-				arr_no = [];
-			}
 			//b. 우승자가 1명 뿐 -> "우승"
 			if (arr_win.length == 1) {
 				victory();
@@ -467,6 +453,13 @@ function battle_finish(counter) {
 
 //우승
 function victory() {
+	if(sessionStorage.getItem(user_name)){
+		var temp = sessionStorage.getItem(user_name);
+		n_round = parseInt(temp);
+	}
+
+	n_round+=1;
+
 	//1. 창 표시
 	$("#frame_intro").style.display = "none";
 	$("#frame_ready").style.display = "none";
@@ -486,7 +479,10 @@ function victory() {
 		$("#victory_img").appendChild(img);
 
 	//3. 우승자 이름 표시
-	$("#victory_name").innerHTML = arr_win[0][0];
+	$("#victory_name").innerHTML = user_name + "님의 " + n_round + "번째 선택은 " + arr_win[0][0] +"입니다!";
+
+	//#.session 저장
+	sessionStorage.setItem(user_name, n_round);
 
 	//4. 되돌아가기 버튼
 	$("#victory_return").onclick = function() {
@@ -534,10 +530,14 @@ window.onload = function() {
 		user_name = prompt("아이디를 입력하세요", "username");
 
 		//버튼 비활성화
-		$("#loading_start").value = "로딩 중";
+		$("#loading_start").value = "로그인 중";
 		$("#loading_start").disabled = "disabled";
 
 		document.getElementById("welcome").innerHTML = user_name + "님 환영합니다!";
+		$("#logout").onclick = function() {
+			window.location.reload(true);
+		}
+
 		//로딩 실시
 		loadImages(imageList,function() {
 
@@ -552,7 +552,6 @@ window.onload = function() {
 			$("#result_record").onclick = function() {
 				result(user_name);
 			}
-
 		});
 	}
 }

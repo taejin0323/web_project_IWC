@@ -9,30 +9,30 @@
 		<div id="wrapper">
 			<!--첫 화면-->
 			<div id="frame_loading">
-				<img id="loading_notice" src="./images/intro_2.gif">
+				<img id="loading_notice" src="https://bnetproduct-a.akamaihd.net//fb7/94d4a5cec48896ea32114553ac71f8a6-hots-minglow-1000x522.png">
 				<input id="loading_start" type="button" value="실행 준비중" disabled/>
-
-				<div id="loading_progress">
-					<div id="loading_bar">
-					</div>
+				<div class="loading-container">
+						<div class="loading"></div>
+						<div id="loading-text">loading</div>
 				</div>
 			</div>
 
-			<!--첫 화면-->
+			<!--메인 화면-->
 			<div id="frame_intro">
-				<div id ="welcome">
-				</div>
+				<div id ="welcome"></div>
+				<input id="logout" type="button" value="로그아웃" />
+
 				<p>
 					시공의 폭풍<br>
 					이상형 월드컵<br>
-
 				</p>
 
 				<img id="intro_logo" src="./images/intro.gif" />
 
 				<input id="intro_start_1" class="intro_start" type="button" value="게임 시작" />
-				<input id="result_record" class="intro_start" type="button" value="결과 기록" />
+				<!--<input id="result_record" class="intro_start" type="button" value="결과 기록" />-->
 			</div>
+
 			<!--N강 시작-->
 			<div id="frame_ready">
 				<p class="title">제 <span id="ready_round"></span>회전 : <span id="ready_people"></span>명 출전</p>
@@ -40,7 +40,8 @@
 				<input id="ready_reset" type="button" value="처음으로" />
 				<hr />
 				<p>출전 영웅 : <div id="ready_image_go"></div></p>
-				<p>밴(ban) : <div id="ready_image_no">없음</div></p>
+				<br><br><br><br><br>
+				<p id="ready_ban">밴(ban) : <div id="ready_image_no"></div></p>
 
 				<input id="ready_start" type="button" value="시작하기" />
 			</div>
@@ -70,14 +71,10 @@
 			<!--우승자-->
 			<div id="frame_victory">
 				<p>MVP</p>
-
-				<div id="victory_img"></div>
-					<img id="victory_winner" src="./images/worldcup/frame/winner.png" />
-
 				<div id="victory_name"></div>
-
+				<div id="victory_img"></div>
+				<img id="victory_winner" src="./images/mvp.png" />
 				<input id="victory_return" type="button" value="처음으로" />
-
 			</div>
 
 			<!--기타-->
